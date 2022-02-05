@@ -4,42 +4,41 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Helpers\Json;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Auth\RegisterRequest;
+use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Http\Resources\Api\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class RegisterController extends Controller
+class LoginController extends Controller
 {
-    public function register(RegisterRequest $request)
+    public function login(LoginRequest $request)
     {
         DB::beginTransaction();
-
         try {
 
-            $userId = User::create([
-                'first_name'    => $request->safe()->first_name,
-                'last_name'     => $request->safe()->last_name,
-                'mobile'        => $request->safe()->mobile,
-                'password'      => Hash::make($request->safe()->password)
-            ])
-                ->id;
+            $user = User::mobile($request->safe()->mobile)
+                ->first();
 
-            $user = User::findOrFail($userId);
+            if (
+                blank($user) ||
+                !Hash::check($request->safe()->password, $user->password)
+            ) {
+                return Json::response(401, 'کاربری با اطلاعات ارسالی یافت نشد');
+            }
 
             $user->accessToken = $user->createToken('user')->accessToken;
 
             DB::commit();
 
             return (new UserResource($user))->setCustomWith([
-                'message'               => 'ثبت نام موفقیت آمیز بود'
+                'message'       => 'ورود موفقیت آمیز'
             ]);
 
             //
         } catch (Exception $e) {
-
+            
             DB::rollBack();
             info($e);
 

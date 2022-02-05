@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,7 @@ Route::prefix('/v1')->name("api.v1.")->group(function () {
 
     Route::prefix('/auth')->name('auth.')->group(function () {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
+        Route::post('/login', [LoginController::class, 'login'])->name('login');
     });
 
     //
