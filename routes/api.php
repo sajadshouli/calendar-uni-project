@@ -29,6 +29,8 @@ Route::prefix('/v1')->name("api.v1.")->group(function () {
         Route::prefix('tasks')->name("tasks.")->group(function () {
             Route::post('/', [TaskController::class, 'store'])->name('store');
             Route::get('/', [TaskController::class, 'index'])->name('index');
+            Route::get('/items/{id}/check', [TaskController::class, 'check'])->name('check');
+            Route::get('/items/{id}/uncheck', [TaskController::class, 'uncheck'])->name('uncheck');
         });
     });
 

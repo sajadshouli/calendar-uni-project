@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Helpers\Json;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -57,5 +58,22 @@ class Handler extends ExceptionHandler
             [],
             $exception->errors()
         );
+    }
+
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Throwable               $exception
+     * @return \Illuminate\Http\Response
+     */
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof ModelNotFoundException) {
+            return Json::response(404, '404 Not Found - صفحه ای یافت نشد');
+        }
+
+        return parent::render($request, $exception);
     }
 }

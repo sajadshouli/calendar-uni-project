@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Helpers\Jdf;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TaskItem extends Model
@@ -22,6 +21,16 @@ class TaskItem extends Model
             return $query->where('task_id', $taskId);
         }
         return $query;
+    }
+
+    public function scopeUnchecked($query)
+    {
+        return $query->where('is_done', 0);
+    }
+
+    public function scopeChecked($query)
+    {
+        return $query->where('is_done', 1);
     }
 
     // Relations
