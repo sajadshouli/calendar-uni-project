@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Task\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,14 @@ Route::prefix('/v1')->name("api.v1.")->group(function () {
     Route::prefix('/auth')->name('auth.')->group(function () {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
         Route::post('/login', [LoginController::class, 'login'])->name('login');
+    });
+
+    //
+    Route::middleware('auth:api')->group(function () {
+
+        Route::prefix('tasks')->name("tasks.")->group(function () {
+            Route::post('/', [TaskController::class, 'store'])->name('store');
+        });
     });
 
     //
