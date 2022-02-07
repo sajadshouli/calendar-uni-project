@@ -28,6 +28,7 @@ Route::prefix('/v1')->name("api.v1.")->group(function () {
 
         Route::prefix('tasks')->name("tasks.")->group(function () {
             Route::post('/', [TaskController::class, 'store'])->name('store');
+            Route::get('/', [TaskController::class, 'index'])->name('index');
         });
     });
 

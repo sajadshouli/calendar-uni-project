@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Jdf;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
@@ -36,6 +37,15 @@ class Task extends Model
 
 
     // Accessors
+    public function getCreatedAtAttribute($value)
+    {
+        return (string) $value;
+    }
+
+    public function getJcreatedAtAttribute()
+    {
+        return Jdf::gtoj($this->created_at);
+    }
 
 
     // Mutators

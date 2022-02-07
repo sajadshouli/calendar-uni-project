@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\Jdf;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,7 +32,25 @@ class TaskItem extends Model
 
 
     // Accessors
+    public function getCreatedAtAttribute($value)
+    {
+        return (string) $value;
+    }
 
+    public function getJcreatedAtAttribute()
+    {
+        return Jdf::gtoj($this->created_at);
+    }
+
+    public function getDoneAtAttribute($value)
+    {
+        return (string) $value;
+    }
+
+    public function getJdoneAtAttribute()
+    {
+        return Jdf::gtoj($this->done_at);
+    }
 
     // Mutators
 
