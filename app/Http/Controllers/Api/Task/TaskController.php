@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Task\CompleteTaskRequest;
 use App\Http\Requests\Api\Task\StoreRequest;
 use App\Http\Resources\Api\Task\TaskCollection;
+use App\Http\Resources\Api\Task\TaskResource;
 use App\Models\Task;
 use App\Models\TaskItem;
 use Exception;
@@ -41,6 +42,12 @@ class TaskController extends Controller
         ]);
 
         return Json::response(200, 'با موفقیت انجام شد');
+    }
+
+    public function show(Task $task)
+    {
+        $task->load('items');
+        return new TaskResource($task);
     }
 
     public function complete(Task $task, CompleteTaskRequest $request)

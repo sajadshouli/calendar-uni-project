@@ -2,10 +2,12 @@
 
 namespace App\Http\Resources\Api\Task;
 
+use App\Traits\ResourceTrait;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TaskResource extends JsonResource
 {
+    use ResourceTrait;
     /**
      * Transform the resource into an array.
      *
