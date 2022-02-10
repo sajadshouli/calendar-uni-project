@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Task;
 
 use App\Helpers\Json;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Task\CompleteTaskRequest;
 use App\Http\Requests\Api\Task\StoreRequest;
 use App\Http\Resources\Api\Task\TaskCollection;
 use App\Models\Task;
@@ -37,6 +38,15 @@ class TaskController extends Controller
         $taskItem->update([
             'is_done' => 1,
             'done_at' => now()
+        ]);
+
+        return Json::response(200, 'با موفقیت انجام شد');
+    }
+
+    public function complete(Task $task, CompleteTaskRequest $request)
+    {
+        $task->update([
+            'info' => Json::encode($request->safe()->info)
         ]);
 
         return Json::response(200, 'با موفقیت انجام شد');

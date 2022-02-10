@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Jdf;
+use App\Helpers\Json;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
@@ -45,6 +46,11 @@ class Task extends Model
     public function getJcreatedAtAttribute()
     {
         return Jdf::gtoj($this->created_at);
+    }
+
+    public function getInfoAttribute($info)
+    {
+        return Json::decode($info) ?? '';
     }
 
 

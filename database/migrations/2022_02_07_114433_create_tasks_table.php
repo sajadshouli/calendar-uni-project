@@ -18,6 +18,7 @@ class CreateTasksTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('CASCADE')->onUpdate('CASCADE');
             $table->text('expectation')->nullable();
             $table->text('desire')->nullable();
+            $table->json('info')->nullable();
             $table->timestamps();
         });
     }
