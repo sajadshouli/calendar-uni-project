@@ -16,8 +16,6 @@ class CreateTasksTable extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('CASCADE')->onUpdate('CASCADE');
-            $table->text('expectation')->nullable();
-            $table->text('desire')->nullable();
             $table->json('info')->nullable();
             $table->timestamps();
         });

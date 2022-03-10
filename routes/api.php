@@ -27,17 +27,15 @@ Route::prefix('/v1')->name("api.v1.")->group(function () {
     //
     Route::middleware('auth:api')->group(function () {
 
-        Route::prefix('users')->name('users.')->group(function(){
-            Route::get('/' , [UserController::class , 'show'])->name('show');
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'show'])->name('show');
         });
 
         Route::prefix('tasks')->name("tasks.")->group(function () {
             Route::post('/', [TaskController::class, 'store'])->name('store');
+            Route::post('/{task}', [TaskController::class, 'update'])->name('update');
             Route::get('/', [TaskController::class, 'index'])->name('index');
             Route::get('/{task}', [TaskController::class, 'show'])->name('show');
-            Route::post('/{task}/complete', [TaskController::class, 'complete'])->name('complete');
-            Route::get('/items/{id}/check', [TaskController::class, 'check'])->name('check');
-            Route::get('/items/{id}/uncheck', [TaskController::class, 'uncheck'])->name('uncheck');
         });
     });
 

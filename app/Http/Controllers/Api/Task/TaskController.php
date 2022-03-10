@@ -4,14 +4,11 @@ namespace App\Http\Controllers\Api\Task;
 
 use App\Helpers\Json;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\Task\CompleteTaskRequest;
 use App\Http\Requests\Api\Task\StoreRequest;
 use App\Http\Resources\Api\Task\TaskCollection;
 use App\Http\Resources\Api\Task\TaskResource;
 use App\Models\Task;
-use App\Models\TaskItem;
 use Exception;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,60 +18,16 @@ class TaskController extends Controller
     {
         $tasks = Task::latest()
             ->userId($request->user()->id)
-            ->with('items')
             ->get();
 
-        return new TaskCollection($tasks);
-    }
-
-    public function check($id, Request $request)
-    {
-        $taskItem = TaskItem::whereId($id)
-            ->whereHas('task', function (Builder $query) use ($request) {
-                $query->userId($request->user()->id);
-            })
-            ->unchecked()
-            ->firstOrFail();
-
-        $taskItem->update([
-            'is_done' => 1,
-            'done_at' => now()
+        return (new TaskCollection($tasks))->setCustomWith([
+            'message'               => 'لیست کار ها'
         ]);
-
-        return Json::response(200, 'با موفقیت انجام شد');
     }
 
     public function show(Task $task)
     {
-        $task->load('items');
         return new TaskResource($task);
-    }
-
-    public function complete(Task $task, CompleteTaskRequest $request)
-    {
-        $task->update([
-            'info' => Json::encode($request->safe()->info)
-        ]);
-
-        return Json::response(200, 'با موفقیت انجام شد');
-    }
-
-    public function uncheck($id, Request $request)
-    {
-
-        $taskItem = TaskItem::whereId($id)
-            ->whereHas('task', function (Builder $query) use ($request) {
-                $query->userId($request->user()->id);
-            })
-            ->checked()
-            ->firstOrFail();
-
-        $taskItem->update([
-            'is_done' => 0,
-            'done_at' => NULL
-        ]);
-
-        return Json::response(200, 'با موفقیت انجام شد');
     }
 
 
@@ -86,24 +39,41 @@ class TaskController extends Controller
 
             $taskId = Task::create([
                 'user_id'       => $request->user()->id,
-                'expectation'   => $request->safe()->expectation ?? NULL,
-                'desire'        => $request->safe()->desire ?? NULL,
+                'info'          => Json::encode($request->safe()->info)
             ])->id;
-
-            $taskItems = [];
-            foreach ($request->safe()->tasks as $item) {
-                $taskItems[] = [
-                    'task_id'       => $taskId,
-                    'content'       => $item,
-                    'created_at'    => now()
-                ];
-            }
-
-            TaskItem::insert($taskItems);
 
             DB::commit();
 
             return Json::response(200, 'کار های امروز شما با موفقیت ثبت شد');
+
+            //
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            info($e);
+
+            return Json::response(500, 'There is a problem with your request');
+        }
+    }
+
+
+    public function update(Task $task, StoreRequest $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $taskId = Task::whereId($task->id)
+                ->userId($request->user()->id)
+                ->firstOrFail()
+                ->id;
+
+            Task::whereId($taskId)->update([
+                'info'          => Json::encode($request->safe()->info)
+            ]);
+
+            DB::commit();
+
+            return Json::response(200, 'کار های شما با موفقیت به روز شد');
 
             //
         } catch (Exception $e) {

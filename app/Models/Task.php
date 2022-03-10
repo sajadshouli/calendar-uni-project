@@ -31,12 +31,6 @@ class Task extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function items()
-    {
-        return $this->task_items();
-    }
-
-
     // Accessors
     public function getCreatedAtAttribute($value)
     {
@@ -58,9 +52,4 @@ class Task extends Model
 
 
     // Extra methods
-
-    private function task_items()
-    {
-        return $this->hasMany(TaskItem::class);
-    }
 }
